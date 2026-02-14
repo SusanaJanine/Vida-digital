@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frankenstein Final (Loop)</title>
+    
+  
+</head>
+<body>
+
+    <div id="laboratorio">
+        <div id="cabeza" class="parte">CABEZA</div>
+        <div id="brazo-izq" class="parte">BRAZO I</div>
+        <div id="torso" class="parte">TORSO</div>
+        <div id="brazo-der" class="parte">BRAZO D</div>
+        <div id="piernas" class="parte">PIERNAS</div>
+    </div>
+
+    <button id="interruptor">⚡ DAR VIDA</button>
+
+    <audio id="mi-audio" src="Monstruo.mp3" loop></audio>
+
+ <script>
+        const laboratorio = document.getElementById('laboratorio');
+        const boton = document.getElementById('interruptor');
+        const cuerpo = document.body;
+        const audio = document.getElementById('mi-audio');
+        
+        let intervaloCenizas;
+
+        boton.addEventListener('click', () => {
+            laboratorio.classList.toggle('vivo');
+            cuerpo.classList.toggle('terremoto');
+
+            if (laboratorio.classList.contains('vivo')) {
+                // --- ENCENDER ---
+                boton.innerText = "⛔ APAGAR";
+                boton.style.background = "#ffcccc";
+                
+                // REPRODUCIR TU AUDIO
+                audio.currentTime = 0;
+                // Intentar reproducir y avisar si falla
+                audio.play().catch(e => {
+                    console.log("No se encuentra 'sonido.mp3'");
+                    alert("¡OJO! No encuentro 'sonido.mp3' en la carpeta.");
+                });
+                
+                iniciarCenizas();
+                
+            } else {
+                // --- APAGAR ---
+                boton.innerText = "⚡ DAR VIDA";
+                boton.style.background = "#fff";
+                
+                audio.pause();
+                audio.currentTime = 0; // Regresar al inicio
+                detenerCenizas();
+            }
+        });
+
+        // Partículas
+        function crearCeniza() {
+            const ceniza = document.createElement('div');
+            ceniza.classList.add('ceniza');
+            ceniza.style.left = Math.random() * window.innerWidth + 'px';
+            ceniza.style.top = '-10px';
+            const size = Math.random() * 10 + 5; 
+            ceniza.style.width = size + 'px';
+            ceniza.style.height = size + 'px';
+
+            document.body.appendChild(ceniza);
+
+            const animacion = ceniza.animate([
+                { transform: 'translateY(0px) rotate(0deg)', opacity: 1 },
+                { transform: translateY(${window.innerHeight}px) rotate(360deg), opacity: 0 }
+            ], {
+                duration: Math.random() * 1500 + 500,
+                easing: 'linear'
+            });
+
+            animacion.onfinish = () => ceniza.remove();
+        }
+
+        function iniciarCenizas() {
+            intervaloCenizas = setInterval(crearCeniza, 30); 
+        }
+
+        function detenerCenizas() {
+            clearInterval(intervaloCenizas);
+            document.querySelectorAll('.ceniza').forEach(c => c.remove());
+        }
+    </script>
+
+</body>
+</html>
